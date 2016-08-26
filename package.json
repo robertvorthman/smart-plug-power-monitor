@@ -1,0 +1,21 @@
+{
+  "name": "watts-monitor",
+  "version": "0.0.1",
+  "description": "Monitors the power usage of a smart switch, sends notifications or log events when appliance starts or stops consuming power, such as a dish washer",
+  "main": "watts-monitor.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "watts",
+    "power",
+    "monitor",
+    "appliance",
+    "notifications"
+  ],
+  "author": "Robert Vorthman",
+  "license": "ISC",
+  "dependencies": {
+    "hs100-api": "^0.2.0"
+  }
+}
