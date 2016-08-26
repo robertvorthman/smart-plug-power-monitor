@@ -3,12 +3,12 @@
 const Hs100Api = require('hs100-api'); //Smart Plug, for monitoring power usage
 const IFTTTmaker = require('node-ifttt-maker'); //IFTTT, for sending notifications
 
-class WattsMeter {
+class SmartPlugIftttNotifier {
     constructor(options) {
 
         this.config = {
           iftttMakerChannelKey: "", //REQUIRED from https://ifttt.com/maker
-          smartPlugIP: "", //REQUIRED example: 192.168.1.5
+          smartPlugIP: "", //REQUIRED example: "192.168.1.5"
           pollIntervalSeconds: 2, //how often to check wattage
           networkRetryIntervalSeconds: 120, //how often to poll if the smart plug IP address is not reachable
           startEventName: 'appliance-started', //IFTTT maker event name
@@ -42,14 +42,14 @@ class WattsMeter {
         }
 
         this.smartPlug = new Hs100Api({host: this.config.smartPlugIP});
-        this.iftttMarkerChannel = new IFTTTmaker(this.config.iftttMakerChannelKey);
+        this.iftttMakerChannel = new IFTTTmaker(this.config.iftttMakerChannelKey);
     }
 
     start(){
       if(!this.valid){
         throw new Error('Unable to start listening due to invalid configuration options.');
       }else{
-        this.test();
+        this.poll();
       }
     }
 
@@ -57,16 +57,11 @@ class WattsMeter {
       console.log('stop');
     }
 
-    test(){
+    poll(){
       let self = this;
-      console.log('try get consumption');
       try{
         this.smartPlug.getConsumption()
           .then(function(smartPlugData){
-            console.log('then');
-            console.dir(this);
-            console.dir(arguments);
-            console.dir(smartPlugData);
             let consumptionData = smartPlugData.get_realtime;
             self.config.pollingCallback(consumptionData);
             let wattage = consumptionData.power;
@@ -74,18 +69,16 @@ class WattsMeter {
           })
           .catch(function(err){
             //smart plug unreachable
-            console.log('CATCH smart plug unreachable');
             self.config.eventCallback('Smart plug IP address unreachable.', err);
-            self.timer = setTimeout(()=>{self.test()}, self.config.networkRetryIntervalSeconds);
+            self.timer = setTimeout(()=>{self.poll()}, self.config.networkRetryIntervalSeconds);
           });
       } catch(e){
-        console.dir(e);
+        self.config.eventCallback('Error connected to switch', e);
       }
 
     }
 
     _evaluateWattage(wattage){
-      //console.dir(this);
       var now = new Date();
       var applianceJustFinished = false;
       //if above wattage threshold
@@ -127,10 +120,10 @@ class WattsMeter {
 
       if(this.lastEndTime == now){
         //if appliance running just ended, poll wattage after cooldown period
-        setTimeout(()=>{this.test()}, this.config.cooldownPeriodSeconds*1000);
+        setTimeout(()=>{this.poll()}, this.config.cooldownPeriodSeconds*1000);
       }else{
         //otherwise poll at usual polling interval
-        setTimeout(()=>{this.test()}, this.config.pollIntervalSeconds*1000);
+        setTimeout(()=>{this.poll()}, this.config.pollIntervalSeconds*1000);
       }
 
     }
@@ -144,24 +137,23 @@ class WattsMeter {
         params.value1 = elapsedMinutes;
       }
 
-      //console.log('params', params);
-      /*
-      iftttMarkerChannel.request({
+      var self = this;
+      this.iftttMakerChannel.request({
           event: eventName,
           method: 'GET',
           params: params
       }, function (err) {
           if (err) {
-            new Error('Failed to send IFTTT notification '+eventName, err);
+            self.config.eventCallback('Failed to send IFTTT notification', err);
           } else {
-            //sent notification
+            //Sent IFTTT notification
           }
       });
-      */
+
     }
 
 }
 
 
 
-module.exports = WattsMeter;
+module.exports = SmartPlugIftttNotifier;
