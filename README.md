@@ -20,22 +20,25 @@ smartPlugIftttNotifier.start();
 ### Connect the Maker channel
 https://ifttt.com/maker
 
-Paste the Maker key from that page into the constructor options, along with the smart plug's IP address as shown in the example above.
+Paste the Maker key from that page into the constructor options, along with the smart plug's IP address as shown in the JavaScript example above.
 
 ### Create an IFTTT Recipe
-IFTTT can trigger numerous actions when it recieves an event from this script, here is a recipe that sends a push notification to your mobile when your dishwasher finishes running.
-
+The "IF" part of your recipe must be the Maker Channel.
 Trigger Channel = Maker
 Trigger = Receive a web request
-Event Name = appliance-started
+Event Name = ``appliance-completed``
+
+The "DO" part of your recipe can be anything you want.  This example sends a push notification to your mobile when your dishwasher has finished, along with the elapsed time it took to clean the dishes.
+
 Action Channel = IF notifications
-Action = Send a notifications
+Action = Send a notification
 Notification = Dishwasher completed in {{Value1}}
 
-The ``appliance-completed`` event also sends the appliance usage duration to IFTTT as "Value1", so you can display it in your IFTTT notification body.
-``Dishwasher completed in {{Value1}}`` will send a notification to your mobile like this: "Dishwasher completed in 1hr 32m 03s"  The Value2 ingredient contains the duration in milliseconds.
+Will result in a notification like "Dishwasher completed in 1hr 32m 03s";
 
-You can also create a second recipe for the ``appliance-started`` event, which does not include any value ingredients.
+The `appliance-completed`` event sends two ingredients that you can use in your notification text.  Value1 is the pretty time, and Value2 is the elapsed milliseconds.
+
+You can also create an additional recipe that is triggered by the ``appliance-started`` event, which does not contain any ingredients/values for use in notification text.
 
 ## All Options
 Here are all the options you can change, showing the default values.
@@ -50,9 +53,9 @@ var smartPlugIftttNotifier = new SmartPlugIftttNotifier({
           networkRetryIntervalSeconds: 120, //how often to poll if the smart plug IP address is not reachable
           startEventName: 'appliance-started', //IFTTT maker event name
           endEventName: 'appliance-completed', //IFTTT maker event name
-          wattsThreshold: 10, //wattage above this value will trigger start event
-          startTimeWindowSeconds: 30, //if wattage is exceeded for this period, appliance is considered started
-          endTimeWindowSeconds: 60, //if wattage is below threshold for this entire period, appliance is considered completed running
+          wattsThreshold: 10, //wattage above this value will trigger start event after startTimeWindowSeconds
+          startTimeWindowSeconds: 30, //if wattage is exceeded for this duration, appliance is considered started
+          endTimeWindowSeconds: 60, //if wattage is below threshold for this entire duration, appliance is considered completed running
           cooldownPeriodSeconds: 30, //wait this long after end event before responding to subsequent start events, set to same as poll interval if no cooldown is needed
           pollingCallback: (powerConsumption)=>{}, //returns the power consumption data on every polling interval
           eventCallback: (eventName, data)=>{} //called when appliance starts and stops
@@ -64,7 +67,11 @@ smartPlugIftttNotifier.start();
 ## Calibrating/Logging
 Use the pollingCallback and eventCallback to observe the behavior of your appliance.  The pollingCallback will fire at every pollingInterval and return the current watts to help you determine what your wattsThreshold should be.  Or you could send this information to a database or front-end visualization.  The eventCallback will fire when your appliance starts, completes or an error occurs.
 
-Increase the endTimeWindowSeconds if you are getting notifications that your appliance completed before it has actually completed.  endTimeWindowSeconds should be longer than any period of dormancy in your appliance's power usage.
+### appliance-completed event fires too early
+If you are getting notifications that your appliance completed before it has actually completed, increase the endTimeWindowSeconds to be longer than any period of dormancy in your appliance's power usage.
+
+### events fire multiple times
+If you are getting multiple started/completed notifications because of power usage that occurs after the endTimeWindowSeconds, increase the cooldownPeriodSeconds which will stop polling for appliance wattage for the cooldown period.
 
 ## Other Recommendations
 
