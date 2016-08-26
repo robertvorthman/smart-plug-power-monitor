@@ -50,11 +50,11 @@ class SmartPlugIftttNotifier {
         throw new Error('Unable to start listening due to invalid configuration options.');
       }else{
         this.poll();
+
       }
     }
 
     stop(){
-      console.log('stop');
     }
 
     poll(){
@@ -135,7 +135,6 @@ class SmartPlugIftttNotifier {
       if(data && typeof data.elapsed != 'undefined'){
         params.value1 = this.toPrettyTime(data.elapsed);
         params.value2 = data.elapsed;
-        console.log('time string', params.value1);
       }
 
       var self = this;

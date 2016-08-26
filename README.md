@@ -1,4 +1,4 @@
-# SmartPlugIftttNotifier
+# Smart-Plug-Ifttt-Notifier
 
 This node.js package monitors the power usage of a TP-Link HS110 smart plug, to determine when a 120v appliance (such as a dishwasher) starts and stops.  SmartPlugIftttNotifier continuously polls the smart plug for the wattage, and when the wattage exceeds a configurable threshold (default is 10), IFTTT is notified that the appliance has started.  When the wattage drops back below the threshold for a time, IFTTT is notified that the appliance has completed.
 
@@ -34,7 +34,7 @@ The "DO" part of your recipe can be anything you want.  This example sends a pus
 * Action = Send a notification
 * Notification = Dishwasher completed in {{Value1}}
 
-That recipe will result in a notification like "Dishwasher completed in 1hr 32m 03s";
+That recipe will result in a notification like "Dishwasher completed in 1hr 32m 03s" if you have the IFTTT app on your phone;
 
 The `appliance-completed`` event sends two ingredients that you can use in your notification text.  Value1 is the pretty time, and Value2 is the elapsed milliseconds.
 
