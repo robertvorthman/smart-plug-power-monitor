@@ -24,17 +24,17 @@ Paste the Maker key from that page into the constructor options, along with the 
 
 ### Create an IFTTT Recipe
 The "IF" part of your recipe must be the Maker Channel.
-Trigger Channel = Maker
-Trigger = Receive a web request
-Event Name = ``appliance-completed``
+* Trigger Channel = Maker
+* Trigger = Receive a web request
+* Event Name = ``appliance-completed``
 
 The "DO" part of your recipe can be anything you want.  This example sends a push notification to your mobile when your dishwasher has finished, along with the elapsed time it took to clean the dishes.
 
-Action Channel = IF notifications
-Action = Send a notification
-Notification = Dishwasher completed in {{Value1}}
+* Action Channel = IF notifications
+* Action = Send a notification
+* Notification = Dishwasher completed in {{Value1}}
 
-Will result in a notification like "Dishwasher completed in 1hr 32m 03s";
+That recipe will result in a notification like "Dishwasher completed in 1hr 32m 03s";
 
 The `appliance-completed`` event sends two ingredients that you can use in your notification text.  Value1 is the pretty time, and Value2 is the elapsed milliseconds.
 
