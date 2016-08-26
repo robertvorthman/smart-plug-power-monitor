@@ -9,14 +9,14 @@ class SmartPlugIftttNotifier {
         this.config = {
           iftttMakerChannelKey: "", //REQUIRED from https://ifttt.com/maker
           smartPlugIP: "", //REQUIRED example: "192.168.1.5"
-          pollIntervalSeconds: 2, //how often to check wattage
+          pollIntervalSeconds: 30, //how often to check wattage
           networkRetryIntervalSeconds: 120, //how often to poll if the smart plug IP address is not reachable
           startEventName: 'appliance-started', //IFTTT maker event name
           endEventName: 'appliance-completed', //IFTTT maker event name
           wattsThreshold: 10, //wattage above this value will trigger start event
-          startTimeWindowSeconds: 5, //if wattage is exceeded for this period, appliance is considered started
-          endTimeWindowSeconds: 10, //if wattage is below threshold for this entire period, appliance is considered completed running
-          cooldownPeriodSeconds: 20, //wait this long after end event before responding to subsequent start events, set to same as poll interval if no cooldown is needed
+          startTimeWindowSeconds: 30, //if wattage is exceeded for this period, appliance is considered started
+          endTimeWindowSeconds: 60, //if wattage is below threshold for this entire period, appliance is considered completed running
+          cooldownPeriodSeconds: 30, //wait this long after end event before responding to subsequent start events, set to same as poll interval if no cooldown is needed
           pollingCallback: (powerConsumption)=>{}, //returns the power consumption data on every polling interval
           eventCallback: (event, data)=>{} //called when appliance starts and stops
         };
@@ -134,6 +134,7 @@ class SmartPlugIftttNotifier {
 
       if(data && typeof data.elapsed != 'undefined'){
         params.value1 = this.toPrettyTime(data.elapsed);
+        params.value2 = data.elapsed;
         console.log('time string', params.value1);
       }
 

@@ -1,6 +1,6 @@
 {
   "name": "smart-plug-ifttt-notifier",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "Monitors the realtime wattage of a TP-Link HS110 Smart Plug, then sends an IFTTT notification when the appliance starts and stops using power (such as a dishwasher).",
   "main": "index.js",
   "scripts": {
