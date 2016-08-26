@@ -133,8 +133,8 @@ class SmartPlugIftttNotifier {
       var params = {};
 
       if(data && typeof data.elapsed != 'undefined'){
-        var elapsedMinutes = (data.elapsed/1000/60).toFixed(1);
-        params.value1 = elapsedMinutes;
+        params.value1 = this.toPrettyTime(data.elapsed);
+        console.log('time string', params.value1);
       }
 
       var self = this;
@@ -150,6 +150,14 @@ class SmartPlugIftttNotifier {
           }
       });
 
+    }
+
+    toPrettyTime(milliseconds) {
+      var seconds = milliseconds/1000;
+      var h = Math.floor(seconds / 3600);
+      var m = Math.floor(seconds % 3600 / 60);
+      var s = Math.floor(seconds % 3600 % 60);
+      return ((h > 0 ? h + "hr " + (m < 10 ? "0" : "") : "") + m + "m " + (s < 10 ? "0" : "") + s+"s");
     }
 
 }
