@@ -1,21 +1,30 @@
 {
-  "name": "watts-monitor",
+  "name": "smart-plug-ifttt-notifier",
   "version": "0.0.1",
-  "description": "Monitors the power usage of a smart switch, sends notifications or log events when appliance starts or stops consuming power, such as a dish washer",
-  "main": "watts-monitor.js",
+  "description": "Monitors the realtime wattage of a TP-Link HS110 Smart Plug, then sends an IFTTT notification when the appliance starts and stops using power (such as a dishwasher).",
+  "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/robertvorthman/smart-plug-ifttt-notifier.git"
   },
   "keywords": [
     "watts",
     "power",
     "monitor",
     "appliance",
-    "notifications"
+    "notifications",
+    "dishwasher",
+    "ifttt",
+    "smart plug"
+    "maker channel"
   ],
   "author": "Robert Vorthman",
   "license": "ISC",
   "dependencies": {
-    "hs100-api": "^0.2.0"
+    "hs100-api": "^0.2.0",
+    "node-ifttt-maker": "^0.1.2"
   }
 }
