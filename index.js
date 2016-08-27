@@ -109,7 +109,8 @@ class SmartPlugPowerMonitor {
         if(elapsed > this.config.endTimeWindowSeconds * 1000){
           //appliance completed
           this.applianceRunning = false;
-          this.sendNotification(this.config.endEventName, {elapsed: elapsed});
+          var runtime = now - this.overWattsThresholdStartTime;
+          this.sendNotification(this.config.endEventName, {runtime: runtime});
           this.lastEndTime = now;
           //reset start time
           this.overWattsThresholdStartTime = null;
@@ -137,9 +138,9 @@ class SmartPlugPowerMonitor {
 
         var params = {};
 
-        if(data && typeof data.elapsed != 'undefined'){
-          params.value1 = this.toPrettyTime(data.elapsed);
-          params.value2 = data.elapsed;
+        if(data && typeof data.runtime != 'undefined'){
+          params.value1 = this.toPrettyTime(data.runtime);
+          params.value2 = data.runtime;
         }
 
         this.iftttMakerChannel.request({
