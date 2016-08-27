@@ -35,14 +35,13 @@ class SmartPlugPowerMonitor {
         if (!this.config.smartPlugIP || typeof this.config.smartPlugIP !== 'string') {
           this.valid = false;
           throw new Error('smartPlugIP (string) is missing from options.  Provide the IP Address of your TP-Link HS110.');
-        }
-        if (!this.config.iftttMakerChannelKey || typeof this.config.iftttMakerChannelKey !== 'string') {
-          this.valid = false;
-          throw new Error('iftttMakerChannelKey (string) is missing from options.  Get one here: https://ifttt.com/maker');
+        }else{
+          this.smartPlug = new Hs100Api({host: this.config.smartPlugIP});
         }
 
-        this.smartPlug = new Hs100Api({host: this.config.smartPlugIP});
-        this.iftttMakerChannel = new IFTTTmaker(this.config.iftttMakerChannelKey);
+        if (this.config.iftttMakerChannelKey && typeof this.config.iftttMakerChannelKey == 'string') {
+          this.iftttMakerChannel = new IFTTTmaker(this.config.iftttMakerChannelKey);
+        }
     }
 
     start(){
@@ -70,7 +69,7 @@ class SmartPlugPowerMonitor {
           .catch(function(err){
             //smart plug unreachable
             self.config.eventCallback('Smart plug IP address unreachable.', err);
-            self.timer = setTimeout(()=>{self.poll()}, self.config.networkRetryIntervalSeconds);
+            self.timer = setTimeout(()=>{self.poll()}, self.config.networkRetryIntervalSeconds*1000);
           });
       } catch(e){
         self.config.eventCallback('Error connected to switch', e);
@@ -130,25 +129,33 @@ class SmartPlugPowerMonitor {
 
     sendNotification(eventName, data){
       this.config.eventCallback(eventName, data);
-      var params = {};
 
-      if(data && typeof data.elapsed != 'undefined'){
-        params.value1 = this.toPrettyTime(data.elapsed);
-        params.value2 = data.elapsed;
-      }
 
       var self = this;
-      this.iftttMakerChannel.request({
-          event: eventName,
-          method: 'GET',
-          params: params
-      }, function (err) {
-          if (err) {
-            self.config.eventCallback('Failed to send IFTTT notification', err);
-          } else {
-            //Sent IFTTT notification
-          }
-      });
+
+      if(this.iftttMakerChannel){
+
+        var params = {};
+
+        if(data && typeof data.elapsed != 'undefined'){
+          params.value1 = this.toPrettyTime(data.elapsed);
+          params.value2 = data.elapsed;
+        }
+
+        this.iftttMakerChannel.request({
+            event: eventName,
+            method: 'GET',
+            params: params
+        }, function (err) {
+            if (err) {
+              self.config.eventCallback('Failed to send IFTTT notification', err);
+            } else {
+              //Sent IFTTT notification
+            }
+        });
+      }
+
+
 
     }
 
