@@ -1,6 +1,6 @@
-# Smart-Plug-Ifttt-Notifier
+# smart-plug-ifttt-notifier
 
-This node.js package monitors the power usage of a TP-Link HS110 smart plug, to determine when a 120v appliance (such as a dishwasher) starts and stops.  SmartPlugIftttNotifier continuously polls the smart plug for the wattage, and when the wattage exceeds a configurable threshold (default is 10), IFTTT is notified that the appliance has started.  When the wattage drops back below the threshold for a time, IFTTT is notified that the appliance has completed.
+This node.js package monitors the power usage of a TP-Link HS110 smart plug, to determine when a 120v appliance (such as a dishwasher) starts and stops.  smart-Plug-Ifttt-Notifier continuously polls the smart plug for the wattage, and when the wattage exceeds a configurable threshold (default is 10), IFTTT is notified that the appliance has started.  When the wattage drops back below the threshold for a time, IFTTT is notified that the appliance has completed.
 
 You only need the IP address of your smart plug, and an IFTTT account.
 

@@ -3,7 +3,7 @@
 const Hs100Api = require('hs100-api'); //Smart Plug, for monitoring power usage
 const IFTTTmaker = require('node-ifttt-maker'); //IFTTT, for sending notifications
 
-class SmartPlugIftttNotifier {
+class SmartPlugPowerMonitor {
     constructor(options) {
 
         this.config = {
@@ -164,4 +164,4 @@ class SmartPlugIftttNotifier {
 
 
 
-module.exports = SmartPlugIftttNotifier;
+module.exports = SmartPlugPowerMonitor;

@@ -1,5 +1,5 @@
 {
-  "name": "smart-plug-ifttt-notifier",
+  "name": "smart-plug-power-monitor",
   "version": "0.1.0",
   "description": "Monitors the realtime wattage of a TP-Link HS110 Smart Plug, then sends an IFTTT notification when the appliance starts and stops using power (such as a dishwasher).",
   "main": "index.js",
@@ -8,7 +8,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/robertvorthman/smart-plug-ifttt-notifier.git"
+    "url": "https://github.com/robertvorthman/smart-plug-power-monitor"
   },
   "keywords": [
     "watts",
@@ -18,7 +18,7 @@
     "notifications",
     "dishwasher",
     "ifttt",
-    "smart plug"
+    "smart plug",
     "maker channel"
   ],
   "author": "Robert Vorthman",
