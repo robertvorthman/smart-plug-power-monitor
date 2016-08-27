@@ -1,19 +1,19 @@
-# smart-plug-ifttt-notifier
+# smart-plug-power-monitor
 
-This node.js package monitors the power usage of a TP-Link HS110 smart plug, to determine when a 120v appliance (such as a dishwasher) starts and stops.  smart-Plug-Ifttt-Notifier continuously polls the smart plug for the wattage, and when the wattage exceeds a configurable threshold (default is 10), IFTTT is notified that the appliance has started.  When the wattage drops back below the threshold for a time, IFTTT is notified that the appliance has completed.
+This node.js package monitors the power usage of a TP-Link HS110 smart plug, to determine when a 120v appliance (such as a dishwasher) starts and stops.  smart-plug-power-monitor continuously polls the smart plug for the wattage, and when the wattage exceeds a configurable threshold (default is 10), IFTTT is notified that the appliance has started.  When the wattage drops back below the threshold for a time, IFTTT is notified that the appliance has completed.
 
 You only need the IP address of your smart plug, and an IFTTT account.
 
 ## Example
 ```js
-var SmartPlugIftttNotifier = require("smart-plug-ifttt-notifier");
+var SmartPlugPowerMonitor = require("smart-plug-power-monitor");
 
-var smartPlugIftttNotifier = new SmartPlugIftttNotifier({
+var smartPlugPowerMonitor = new SmartPlugPowerMonitor({
   smartPlugIP: "192.168.5.55",
   iftttMakerChannelKey: "yourIftttMakerKey"
 });
 
-smartPlugIftttNotifier.start();
+smartPlugPowerMonitor.start();
 ```
 ## Instructions for Settings up an IFTTT recipe
 
@@ -43,9 +43,9 @@ You can also create an additional recipe that is triggered by the ``appliance-st
 ## All Options
 Here are all the options you can change, showing the default values.
 ```js
-var SmartPlugIftttNotifier = require("smart-plug-ifttt-notifier");
+var SmartPlugPowerMonitor = require("smart-plug-power-monitor");
 
-var smartPlugIftttNotifier = new SmartPlugIftttNotifier({
+var smartPlugPowerMonitor = new SmartPlugPowerMonitor({
   {
           iftttMakerChannelKey: "",//REQUIRED from https://ifttt.com/maker
           smartPlugIP: "", //REQUIRED example: "192.168.1.5"
@@ -62,7 +62,7 @@ var smartPlugIftttNotifier = new SmartPlugIftttNotifier({
         }
 });
 
-smartPlugIftttNotifier.start();
+smartPlugPowerMonitor.start();
 ```
 ## Calibrating/Logging
 Use the pollingCallback and eventCallback to observe the behavior of your appliance.  The pollingCallback will fire at every pollingInterval and return the current watts to help you determine what your wattsThreshold should be.  Or you could send this information to a database or front-end visualization.  The eventCallback will fire when your appliance starts, completes or an error occurs.
