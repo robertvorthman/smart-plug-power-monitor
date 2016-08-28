@@ -1,0 +1,14 @@
+{
+  "name": "power-monitor",
+  "version": "1.0.0",
+  "description": "Node.js script that continuously polls the smart plug for wattage, then sends it to a web server",
+  "main": "power-monitor.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Robert Vorthman",
+  "license": "ISC",
+  "dependencies": {
+    "socket.io": "^1.4.8"
+  }
+}

@@ -4,10 +4,8 @@ var http = require('http').Server(app);
 var io = require('socket.io')(http);
 
 io.on('connection', function(socket){
-	console.log('connection');
 	//recieve data from smart plug node.js script
   socket.on('smart plug data', function(msg){
-		console.log('connection', msg);
 		//send data to graph
     io.emit('graph data', msg);
   });
@@ -18,6 +16,5 @@ app.get('/', function (req, res) {
 });
 
 http.listen(3000, function(){
-	console.log('TODO show URL');
-	console.log('Node Express Webserver Started');
+	console.log('Node Express Webserver Started, open http://localhost:3000');
 });

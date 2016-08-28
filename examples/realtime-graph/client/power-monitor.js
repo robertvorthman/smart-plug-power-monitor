@@ -1,6 +1,5 @@
-var socket = require('socket.io-client')('http://localhost');
+var socket = require('socket.io-client')('http://localhost:3000');
 var SmartPlugPowerMonitor = require("smart-plug-power-monitor");
-
 
 //connect to smart plug
 var smartPlugPowerMonitor = new SmartPlugPowerMonitor({
