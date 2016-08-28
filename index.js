@@ -62,7 +62,7 @@ class SmartPlugPowerMonitor {
         this.smartPlug.getConsumption()
           .then(function(smartPlugData){
             let consumptionData = smartPlugData.get_realtime;
-            consumptionData.timestamp = new Date();
+            consumptionData.timestamp = new Date().getTime();
             self.config.pollingCallback(consumptionData);
             let wattage = consumptionData.power;
             self._evaluateWattage(wattage);
