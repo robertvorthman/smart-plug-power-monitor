@@ -1,6 +1,6 @@
 # smart-plug-power-monitor
 
-This node.js package monitors the power usage of a TP-Link HS110 smart plug, to determine when a 120v appliance (such as a dishwasher) starts and stops.  smart-plug-power-monitor continuously polls the smart plug for the wattage, and when the wattage exceeds a configurable threshold (default is 1), IFTTT is notified that the appliance has started.  When the wattage drops back below the threshold for a time, IFTTT is notified that the appliance has completed.
+This node.js package monitors the power usage of a TP-Link HS110 smart plug, to determine when a 120v appliance (such as a dishwasher) starts and stops.  smart-plug-power-monitor continuously polls the smart plug for the wattage, and when the wattage exceeds a configurable threshold, IFTTT is notified that the appliance has started.  When the wattage drops back below the threshold for a time, IFTTT is notified that the appliance has completed.
 
 ## Example
 ```js
@@ -16,9 +16,9 @@ smartPlugPowerMonitor.start();
 
 ##Custom Events
 
-If you do not want to use IFTTT, you can omit the Maker key completely.  Just use the callbacks to respond to usage data and events.
+If you do not want to use IFTTT, you can omit the Maker key completely.  Just use the callbacks to respond to polling data and appliance events.
 
-The pollingCallback is called every poll interval with the following data:
+The pollingCallback is called every poll interval and receives an object with the following power usage data:
 
 ```json
 {
@@ -30,6 +30,45 @@ The pollingCallback is called every poll interval with the following data:
     "timestamp": 1472345580826
 }
 ```
+This realtime power consumption data could be sent to a graph for realtime visualization.
+
+```js
+var smartPlugPowerMonitor = new SmartPlugPowerMonitor({
+  smartPlugIP: "192.168.5.55",
+  pollIntervalSeconds: 1,
+  pollingCallback: function(powerConsumption){
+    sendToRealtimeGraph(powerConsumption.power, powerConsumption.timestamp);
+  }
+});
+smartPlugPowerMonitor.start();
+```
+
+
+The eventCallback is called when the appliance starts, stops or an error occurs.  Useful for logging appliance usage to a database or Google Sheets.
+
+```js
+var smartPlugPowerMonitor = new SmartPlugPowerMonitor({
+  smartPlugIP: "192.168.5.55",
+  eventCallback: function(eventName, data){
+    logToDatabase(eventName, data);
+  }
+});
+smartPlugPowerMonitor.start();
+```
+Possible values for eventName
+"appliance-started"
+  data = undefined
+"appliance-completed"
+  data = {
+    runtime: milliseconds //since appliance-started
+  };
+"Failed to send IFTTT notification"
+  data = ifttError
+
+"Smart plug IP address unreachable."
+  data = plugError
+"Error connecting to switch"
+  data = plugError
 
 ## Instructions for Settings up an IFTTT recipe
 
@@ -44,15 +83,15 @@ The "IF" part of your recipe must be the Maker Channel.
 * Trigger = Receive a web request
 * Event Name = ``appliance-completed``
 
-The "DO" part of your recipe can be anything you want.  This example sends a push notification to your mobile when your dishwasher has finished, along with the elapsed time it took to clean the dishes.
+The "DO" part of your recipe can be anything you want.  The example below sends a push notification to your mobile when your dishwasher has finished, along with the elapsed time it took to clean the dishes.
 
 * Action Channel = IF notifications
 * Action = Send a notification
 * Notification = Dishwasher completed in {{Value1}}
 
-That recipe will result in a notification like "Dishwasher completed in 1hr 32m 03s" if you have the IFTTT app on your phone;
+If you have the IFTTT app on you phone, that recipe will result in a notification like "Dishwasher completed in 1hr 32m 03s".
 
-The `appliance-completed`` event sends two ingredients that you can use in your notification text.  Value1 is the pretty time, and Value2 is the elapsed milliseconds.
+The `appliance-completed` event sends two ingredients that you can use in your notification text.  Value1 is the pretty time, and Value2 is the elapsed milliseconds.
 
 You can also create an additional recipe that is triggered by the ``appliance-started`` event, which does not contain any ingredients/values for use in notification text.
 
@@ -80,6 +119,7 @@ var smartPlugPowerMonitor = new SmartPlugPowerMonitor({
 
 smartPlugPowerMonitor.start();
 ```
+
 ## Calibrating/Logging
 Use the pollingCallback and eventCallback to observe the behavior of your appliance.  The pollingCallback will fire at every pollingInterval and return the current watts to help you determine what your wattsThreshold should be.  Or you could send this information to a database or front-end visualization.  The eventCallback will fire when your appliance starts, completes or an error occurs.
 
