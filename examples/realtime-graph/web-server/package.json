@@ -1,7 +1,7 @@
 {
   "name": "realtime-graph",
   "version": "1.0.0",
-  "description": "example of sending smart plug data to web server and graph in realtime",
+  "description": "realtime graph example, data sent continuously from web server using socket.io",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
