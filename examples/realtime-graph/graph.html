@@ -30,6 +30,11 @@
             width: 40px;
         }
 
+        #x_axis{
+          position: absolute;
+          left: 40px;
+        }
+
         #y_axis,
         #x_axis {
             fill: white;
@@ -56,7 +61,6 @@
             element: document.querySelector("#chart"),
             width: 800,
             height: 400,
-            renderer: 'bar',
             series: [{
                 color: 'green',
                 data: chartData
@@ -84,9 +88,8 @@
 
         //connect socket.io to web server to receive smart plug data
         var socket = io();
-        socket.on('graph data', function(data) {
+        socket.on('smart plug data', function(data) {
             document.querySelector("#watts").innerHTML = data.power.toFixed(1);
-
             //add new data to chart
             chartData.push({
                 x: data.timestamp / 1000,

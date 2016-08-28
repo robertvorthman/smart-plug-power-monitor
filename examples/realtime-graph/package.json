@@ -3,13 +3,11 @@
   "version": "1.0.0",
   "description": "realtime graph example, data sent continuously from web server using socket.io",
   "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
   "author": "Robert Vorthman",
   "license": "ISC",
   "dependencies": {
     "express": "^4.14.0",
+    "smart-plug-power-monitor": "git+https://github.com/robertvorthman/smart-plug-power-monitor.git",
     "socket.io": "^1.4.8"
   }
 }
