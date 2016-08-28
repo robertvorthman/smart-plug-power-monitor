@@ -1,0 +1,15 @@
+{
+  "name": "realtime-graph",
+  "version": "1.0.0",
+  "description": "example of sending smart plug data to web server and graph in realtime",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Robert Vorthman",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.14.0",
+    "socket.io": "^1.4.8"
+  }
+}
