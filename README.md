@@ -4,6 +4,17 @@ This node.js package monitors the power usage of a TP-Link HS110 smart plug, to 
 
 You only need the IP address of your smart plug, and an IFTTT account.
 
+```json
+{
+    "current": 0.128781,
+    "voltage": 123.907939,
+    "power": 8.986571,
+    "total": 0.001,
+    "err_code": 0,
+    "timestamp": 1472345580826
+}
+```
+
 ## Example
 ```js
 var SmartPlugPowerMonitor = require("smart-plug-power-monitor");
