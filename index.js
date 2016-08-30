@@ -1,5 +1,7 @@
 'use strict';
 
+//TODO add minimum runtime for cooldown
+
 const Hs100Api = require('hs100-api'); //Smart Plug, for monitoring power usage
 const IFTTTmaker = require('node-ifttt-maker'); //IFTTT, for sending notifications
 
@@ -17,6 +19,7 @@ class SmartPlugPowerMonitor {
           startTimeWindowSeconds: 30, //if wattage is exceeded for this period, appliance is considered started
           endTimeWindowSeconds: 60, //if wattage is below threshold for this entire duration, appliance is considered completed running
           cooldownPeriodSeconds: 30, //wait this long after end event before responding to subsequent start events, set to same as poll interval if no cooldown is needed
+          minRuntimeForCooldownSeconds: 10 * 60, //minimum runtime for cooldown period to engage, otherwise will start polling at usual interval after end
           pollingCallback: (powerConsumption)=>{}, //returns the power consumption data on every polling interval
           eventCallback: (event, data)=>{} //called when appliance starts and stops
         };
@@ -73,7 +76,7 @@ class SmartPlugPowerMonitor {
             self.timer = setTimeout(()=>{self.poll()}, self.config.networkRetryIntervalSeconds*1000);
           });
       } catch(e){
-        self.config.eventCallback('Error connected to switch', e);
+        self.config.eventCallback('Error connecting to switch', e);
       }
 
     }
@@ -119,7 +122,7 @@ class SmartPlugPowerMonitor {
 
       }
 
-      if(this.lastEndTime == now){
+      if(this.lastEndTime == now && runtime > this.config.minRuntimeForCooldownSeconds){
         //if appliance running just ended, poll wattage after cooldown period
         setTimeout(()=>{this.poll()}, this.config.cooldownPeriodSeconds*1000);
       }else{
