@@ -1,6 +1,6 @@
 'use strict';
 
-//TODO add minimum runtime for cooldown
+//TODO update documentation, kwh event data, ifttt ingredient, minRuntimeForCooldownSeconds
 
 const Hs100Api = require('hs100-api'); //Smart Plug, for monitoring power usage
 const IFTTTmaker = require('node-ifttt-maker'); //IFTTT, for sending notifications
@@ -123,7 +123,7 @@ class SmartPlugPowerMonitor {
           var runtime = now - this.overWattsThresholdStartTime;
 
           this.sendNotification(this.config.endEventName, {
-            runtime: runtime
+            runtime: runtime,
             kwh: consumptionData.total - this.startKwh;
           });
           this.lastEndTime = now;
