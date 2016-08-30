@@ -124,7 +124,7 @@ class SmartPlugPowerMonitor {
 
           this.sendNotification(this.config.endEventName, {
             runtime: runtime,
-            kwh: consumptionData.total - this.startKwh;
+            kwh: consumptionData.total - this.startKwh
           });
           this.lastEndTime = now;
           //reset start time
