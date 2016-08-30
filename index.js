@@ -96,9 +96,10 @@ class SmartPlugPowerMonitor {
         //record start time of watts exceeded
         if(!this.overWattsThresholdStartTime){
           this.overWattsThresholdStartTime = new Date();
+          this.startKwh = consumptionData.total;
         }
 
-        this.startKwh = consumptionData.total;
+
 
         this.elapsedRuntime = now - this.overWattsThresholdStartTime;
 
