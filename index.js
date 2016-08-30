@@ -31,7 +31,10 @@ class SmartPlugPowerMonitor {
         this.elapsedRuntime = 0;
         this.overWattsThresholdStartTime;
         this.underWattsThresholdStartTime;
+        this.startKwh;
+
         this.lastEndTime;
+
 
         //check for required options
         this.valid = true;
@@ -67,8 +70,7 @@ class SmartPlugPowerMonitor {
             let consumptionData = smartPlugData.get_realtime;
             consumptionData.timestamp = new Date().getTime();
             self.config.pollingCallback(consumptionData);
-            let wattage = consumptionData.power;
-            self._evaluateWattage(wattage);
+            self._evaluatePowerUsage(consumptionData);
           })
           .catch(function(err){
             //smart plug unreachable
@@ -81,7 +83,10 @@ class SmartPlugPowerMonitor {
 
     }
 
-    _evaluateWattage(wattage){
+    _evaluatePowerUsage(consumptionData){
+
+      var wattage = consumptionData.power;
+
       var now = new Date();
       var applianceJustFinished = false;
       //if above wattage threshold
@@ -92,6 +97,8 @@ class SmartPlugPowerMonitor {
         if(!this.overWattsThresholdStartTime){
           this.overWattsThresholdStartTime = new Date();
         }
+
+        this.startKwh = consumptionData.total;
 
         this.elapsedRuntime = now - this.overWattsThresholdStartTime;
 
@@ -114,7 +121,11 @@ class SmartPlugPowerMonitor {
           //appliance completed
           this.applianceRunning = false;
           var runtime = now - this.overWattsThresholdStartTime;
-          this.sendNotification(this.config.endEventName, {runtime: runtime});
+
+          this.sendNotification(this.config.endEventName, {
+            runtime: runtime
+            kwh: consumptionData.total - this.startKwh;
+          });
           this.lastEndTime = now;
           //reset start time
           this.overWattsThresholdStartTime = null;
@@ -145,6 +156,7 @@ class SmartPlugPowerMonitor {
         if(data && typeof data.runtime != 'undefined'){
           params.value1 = this.toPrettyTime(data.runtime);
           params.value2 = data.runtime;
+          params.value3 = data.kwh;
         }
 
         this.iftttMakerChannel.request({
