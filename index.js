@@ -1,6 +1,7 @@
 'use strict';
 
 //TODO update documentation, kwh event data, ifttt ingredient, minRuntimeForCooldownSeconds
+// add money estimate
 
 const Hs100Api = require('hs100-api'); //Smart Plug, for monitoring power usage
 const IFTTTmaker = require('node-ifttt-maker'); //IFTTT, for sending notifications
@@ -121,7 +122,7 @@ class SmartPlugPowerMonitor {
         if(elapsed > this.config.endTimeWindowSeconds * 1000){
           //appliance completed
           this.applianceRunning = false;
-          var runtime = now - this.overWattsThresholdStartTime;
+          var runtime = this.underWattsThresholdStartTime - this.overWattsThresholdStartTime;
 
           this.sendNotification(this.config.endEventName, {
             runtime: runtime,
