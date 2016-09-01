@@ -104,21 +104,21 @@ Here are all the options you can change, showing the default values.
 var SmartPlugPowerMonitor = require("smart-plug-power-monitor");
 
 var smartPlugPowerMonitor = new SmartPlugPowerMonitor({
-          smartPlugIP: "", //REQUIRED example: "192.168.1.5"
-          iftttMakerChannelKey: "", //from https://ifttt.com/maker
-          pollIntervalSeconds: 30, //how often to check wattage
-          networkRetryIntervalSeconds: 120, //how often to poll if the smart plug IP address is not reachable
-          startEventName: 'appliance-started', //IFTTT maker event name
-          endEventName: 'appliance-completed', //IFTTT maker event name
-          wattsThreshold: 1, //wattage above this value will trigger start event after startTimeWindowSeconds
-          startTimeWindowSeconds: 30, //if wattage is exceeded for this period, appliance is considered started
-          endTimeWindowSeconds: 60, //if wattage is below threshold for this entire duration, appliance is considered completed running
-          cooldownPeriodSeconds: 30, //wait this long after end event before responding to subsequent start events, set to same as poll interval if no cooldown is needed
-          minRuntimeForCooldownSeconds: 10 * 60, //minimum runtime for cooldown period to engage.  If appliance ends earlier, start polling at usual interval after end instead of waiting for cooldown period
-          kwhPrice: 0.12, //price of electricity, to calculate usage cost in IFTTT notification/event callback
-          pollingCallback: (powerConsumption)=>{}, //returns the power consumption data on every polling interval
-          eventCallback: (event, data)=>{} //called when appliance starts and stops
-        });
+  smartPlugIP: "", //REQUIRED example: "192.168.1.5"
+  iftttMakerChannelKey: "", //from https://ifttt.com/maker
+  pollIntervalSeconds: 30, //how often to check wattage
+  networkRetryIntervalSeconds: 120, //how often to poll if the smart plug IP address is not reachable
+  startEventName: 'appliance-started', //IFTTT maker event name
+  endEventName: 'appliance-completed', //IFTTT maker event name
+  wattsThreshold: 1, //wattage above this value will trigger start event after startTimeWindowSeconds
+  startTimeWindowSeconds: 5, //if wattage is exceeded for this period, appliance is considered started
+  endTimeWindowSeconds: 30, //if wattage is below threshold for this entire duration, appliance is considered completed running
+  cooldownPeriodSeconds: 30, //wait this long after end event before responding to subsequent start events, set to same as poll interval if no cooldown is needed
+  minRuntimeForCooldownSeconds: 60, //minimum runtime for cooldown period to engage.  If appliance ends earlier, start polling at usual interval after end instead of waiting for cooldown period
+  kwhPrice: 0.12, //price of electricity, to calculate usage cost in IFTTT notification/event callback
+  pollingCallback: (powerConsumption)=>{}, //returns the power consumption data on every polling interval
+  eventCallback: (event, data)=>{} //called when appliance starts and stops
+});
 
 smartPlugPowerMonitor.start();
 ```
