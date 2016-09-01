@@ -185,9 +185,9 @@ class SmartPlugPowerMonitor {
       var h = Math.floor(seconds / 3600);
       var m = Math.floor(seconds % 3600 / 60);
       var s = Math.floor(seconds % 3600 % 60);
-      var prettyString = ((h > 0 ? h + "hr " + (m < 10 ? "0" : "") : "") + m + "m";
+      var prettyString = (h > 0 ? h + "hr " + (m < 10 ? "0" : "") : "") + m + "m";
       if(h == 0) //add seconds if less than 1 hour
-        prettyString += " "+ (s < 10 ? "0" : "") + s+"s");
+        prettyString += " "+ (s < 10 ? "0" : "") + s+"s";
 
       return prettyString;
     }
