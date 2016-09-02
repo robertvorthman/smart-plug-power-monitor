@@ -16,6 +16,7 @@ var graphSocket;
 //create socket when client connects
 io.on('connection', function(socket) {
     graphSocket = socket;
+    graphSocket.emit('smart plug config', smartPlugPowerMonitor.config);
 });
 
 function pollingData(powerConsumption) {

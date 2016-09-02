@@ -159,7 +159,7 @@ class SmartPlugPowerMonitor {
 
         if(data && typeof data.runtime != 'undefined'){
           params.value1 = this.toPrettyTime(data.runtime);
-          params.value2 = data.kwh;
+          params.value2 = data.kwh.toFixed(3);
           params.value3 = "$"+data.cost.toFixed(2);
         }
 

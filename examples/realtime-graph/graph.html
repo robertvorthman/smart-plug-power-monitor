@@ -4,42 +4,60 @@
     <title>Power Usage</title>
     <link type="text/css" rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/rickshaw/1.5.1/rickshaw.min.css">
     <style type="text/css">
-        body {
-            background-color: black;
-            font-family: Arial, Helvetica, sans-serif;
-            color: white;
-        }
 
-        h1 {
-            float: right;
-        }
+body{
+  width: 90%;
+  height: 95%;
+  padding: 2.5% 5% ;
+  margin: 0;
+}
 
-        #chart_container {
-            position: relative;
-        }
+body{
+  background-color: black;
+  font-family: Arial, Helvetica, sans-serif;
+  color: white;
+}
+h1{
+  text-align: right;
+  font-size: 1.2em;
+  color: lightgreen;
+}
+#chart_container {
+    position: relative;
+    height: 100%;
+    width: 100%;
+}
+#chart {
+        position: relative;
+        left: 40px;
+}
+#y_axis {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        width: 40px;
+}
 
-        #chart {
-            position: relative;
-            left: 40px;
-        }
+#x_axis{
+  position: relative;
+  left: 40px;
+}
 
-        #y_axis {
-            position: absolute;
-            top: 0;
-            bottom: 0;
-            width: 40px;
-        }
+#y_axis, #x_axis{
+  fill: white;
+}
 
-        #x_axis{
-          position: absolute;
-          left: 40px;
-        }
+.rickshaw_graph .y_ticks text, .rickshaw_graph .x_ticks_d3 text,.rickshaw_graph .y_ticks text, .rickshaw_graph .x_ticks_d3 text{
+  font-size: 16px;
+}
 
-        #y_axis,
-        #x_axis {
-            fill: white;
-        }
-    </style>
+.threshold-line{
+  stroke-dasharray: 3,3;
+  stroke-width: .5;
+  opacity: .5;
+}
+
+</style>
     <script src="/socket.io/socket.io.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/d3/3.5.17/d3.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/rickshaw/1.5.1/rickshaw.min.js"></script>
@@ -54,53 +72,88 @@
     </div>
 
     <script>
-        var chartDataLimit = 240;
-        var chartData = [];
+        var socket = io();
+
+        var dataLimit = 800;
+        var dataPoints = [];
+
+        var threshold = 0;
+        var thresholdPoints = [{
+          x: 0,
+          y: 0
+        },{
+          x: 0,
+          y: 0
+        }];
+
+        var chartBoundingRect = d3.select('#chart_container').node().getBoundingClientRect();
 
         var graph = new Rickshaw.Graph({
             element: document.querySelector("#chart"),
-            width: 800,
-            height: 400,
+            width: chartBoundingRect.width - 60,
+            height: chartBoundingRect.height - 80,
+            padding: {top: 0.15},
+            renderer: 'line',
             series: [{
-                color: 'green',
-                data: chartData
+                color: 'lightgreen',
+                data: dataPoints
+            },{
+              color: 'white',
+              className: 'threshold-line',
+              data: thresholdPoints
             }]
         });
 
         var xAxis = new Rickshaw.Graph.Axis.X({
             graph: graph,
             orientation: 'bottom',
-            element: document.querySelector('#x_axis'),
+          	element: document.getElementById('x_axis'),
             pixelsPerTick: 200,
             tickFormat: function(x) {
-                return (new Date(x * 1000)).toLocaleTimeString();
-            }
+          		return (new Date(x*1000)).toLocaleTimeString();
+          	}
         });
 
-        var yAxis = new Rickshaw.Graph.Axis.Y({
-            graph: graph,
-            orientation: 'left',
-            tickFormat: Rickshaw.Fixtures.Number.formatKMBT,
-            element: document.querySelector('#y_axis'),
-        });
+        var yAxis = new Rickshaw.Graph.Axis.Y( {
+                graph: graph,
+                orientation: 'left',
+                tickFormat: Rickshaw.Fixtures.Number.formatKMBT,
+                element: document.getElementById('y_axis'),
+        } );
 
         graph.render();
-
-        //connect socket.io to web server to receive smart plug data
-        var socket = io();
         socket.on('smart plug data', function(data) {
-            document.querySelector("#watts").innerHTML = data.power.toFixed(1);
-            //add new data to chart
-            chartData.push({
-                x: data.timestamp / 1000,
+            //console.debug(data);
+            document.getElementById("watts").innerHTML = data.power.toFixed(1);
+
+            dataPoints.push({
+                x: data.timestamp/1000,
                 y: data.power
             });
 
-            if (chartData.length > chartDataLimit) {
-                chartData.shift(); //limit number of bars in length
+            if(thresholdPoints[0].x == 0)
+              thresholdPoints[0].x = data.timestamp/1000;
+
+            thresholdPoints[1] = {
+              x: data.timestamp/1000,
+              y: threshold
+            };
+
+            if(dataPoints.length > dataLimit){
+              dataPoints.shift();
             }
+
+
             graph.render();
         });
+
+        socket.on('smart plug config', function(data) {
+          threshold = data.wattsThreshold
+          thresholdPoints[0].y = threshold;
+          thresholdPoints[1].y = threshold;
+        })
+
+
     </script>
 </body>
 
