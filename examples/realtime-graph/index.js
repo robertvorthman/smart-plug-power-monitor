@@ -5,7 +5,7 @@ var io = require('socket.io')(http);
 var SmartPlugPowerMonitor = require("smart-plug-power-monitor");
 
 var smartPlugPowerMonitor = new SmartPlugPowerMonitor({
-    smartPlugIP: "192.168.1.104",
+    smartPlugIP: "192.168.1.63",
     pollIntervalSeconds: 1,
     pollingCallback: pollingData,
 });

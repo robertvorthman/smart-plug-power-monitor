@@ -20,7 +20,7 @@ body{
 h1{
   text-align: right;
   font-size: 1.2em;
-  color: lightgreen;
+  color: green;
 }
 #chart_container {
     position: relative;
@@ -74,35 +74,30 @@ h1{
     <script>
         var socket = io();
 
-        var dataLimit = 800;
-        var dataPoints = [];
-
         var threshold = 0;
-        var thresholdPoints = [{
-          x: 0,
-          y: 0
-        },{
-          x: 0,
-          y: 0
-        }];
+        var interval = 1000;
 
         var chartBoundingRect = d3.select('#chart_container').node().getBoundingClientRect();
 
-        var graph = new Rickshaw.Graph({
-            element: document.querySelector("#chart"),
-            width: chartBoundingRect.width - 60,
-            height: chartBoundingRect.height - 80,
-            padding: {top: 0.15},
-            renderer: 'line',
-            series: [{
-                color: 'lightgreen',
-                data: dataPoints
-            },{
-              color: 'white',
-              className: 'threshold-line',
-              data: thresholdPoints
-            }]
-        });
+        var graph = new Rickshaw.Graph( {
+        	element: document.getElementById("chart"),
+          width: chartBoundingRect.width - 60,
+          height: chartBoundingRect.height - 80,
+          padding: {top: 0.15},
+        	renderer: 'line',
+        	series: new Rickshaw.Series.FixedDuration([{ name: 'watts', color: 'green' }, { name: 'threshold', color: 'white', 'className': 'threshold-line'}], undefined, {
+        		timeInterval: interval,
+        		maxDataPoints: 300,
+        		timeBase: new Date().getTime() / 1000
+        	})
+        } );
+
+        var yAxis = new Rickshaw.Graph.Axis.Y( {
+                graph: graph,
+                orientation: 'left',
+                tickFormat: Rickshaw.Fixtures.Number.formatKMBT,
+                element: document.getElementById('y_axis'),
+        } );
 
         var xAxis = new Rickshaw.Graph.Axis.X({
             graph: graph,
@@ -114,47 +109,33 @@ h1{
           	}
         });
 
-        var yAxis = new Rickshaw.Graph.Axis.Y( {
-                graph: graph,
-                orientation: 'left',
-                tickFormat: Rickshaw.Fixtures.Number.formatKMBT,
-                element: document.getElementById('y_axis'),
-        } );
-
         graph.render();
+
+
         socket.on('smart plug data', function(data) {
-            //console.debug(data);
             document.getElementById("watts").innerHTML = data.power.toFixed(1);
 
-            dataPoints.push({
-                x: data.timestamp/1000,
-                y: data.power
+            graph.series.addData({
+              watts: data.power,
+              threshold: threshold
             });
-
-            if(thresholdPoints[0].x == 0)
-              thresholdPoints[0].x = data.timestamp/1000;
-
-            thresholdPoints[1] = {
-              x: data.timestamp/1000,
-              y: threshold
-            };
-
-            if(dataPoints.length > dataLimit){
-              dataPoints.shift();
-            }
-
 
             graph.render();
         });
 
         socket.on('smart plug config', function(data) {
-          threshold = data.wattsThreshold
-          thresholdPoints[0].y = threshold;
-          thresholdPoints[1].y = threshold;
+          threshold = data.wattsThreshold;
+          interval = data.pollIntervalSeconds * 1000;
+
+          //retroactivily lift dashed threshold line
+          graph.series[1].data.forEach(function(point){
+            point.y = threshold;
+          });
         })
 
 
     </script>
+
 </body>
 
 </html>
