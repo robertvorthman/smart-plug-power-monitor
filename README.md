@@ -14,8 +14,13 @@ var smartPlugPowerMonitor = new SmartPlugPowerMonitor({
 
 smartPlugPowerMonitor.start();
 ```
+## Installing
+```
+npm install https://github.com/robertvorthman/smart-plug-power-monitor.git
+```
 
-##Custom Events
+
+## Custom Events
 
 If you do not want to use IFTTT, you can omit the Maker key completely.  Just use the callbacks to respond to polling data and start/completed events.
 
